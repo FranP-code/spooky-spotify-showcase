@@ -2,9 +2,20 @@ import Link from "next/link";
 
 import { LatestPost } from "@/app/_components/post";
 import { api, HydrateClient } from "@/trpc/server";
+import SpotifyLogin from "./_components/spotify-login";
+import { NextApiRequest } from "next";
+import { NextResponse } from "next/server";
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
   const hello = await api.post.hello({ text: "from tRPC" });
+
+  const access_token = searchParams?.access_token;
+  const refresh_token = searchParams?.refresh_token;
+  const userLogged = access_token && refresh_token;
 
   void api.post.getLatest.prefetch();
 
@@ -44,7 +55,7 @@ export default async function Home() {
               {hello ? hello.greeting : "Loading tRPC query..."}
             </p>
           </div>
-
+          <SpotifyLogin />
           <LatestPost />
         </div>
       </main>
