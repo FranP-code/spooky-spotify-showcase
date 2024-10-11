@@ -1,7 +1,9 @@
 import SpotifyWebApi from "spotify-web-api-node";
 import AlbumShowcase from "./album-showcase";
+import ArtistShowcase from "./artist-showcase";
 
 const TRACKS_LIMIT = 20;
+const ARTISTS_LIMIT = 21;
 
 export type TrackByAlbum = {
   album: {
@@ -34,7 +36,7 @@ export default async function SpotifyData({
   const albums = albumsData.body.items;
 
   const artistsData = await spotifyApi.getMyTopArtists({
-    limit: 20,
+    limit: ARTISTS_LIMIT,
     time_range: "short_term",
   });
   const artists = artistsData.body.items;
@@ -180,25 +182,11 @@ export default async function SpotifyData({
         style={{
           display: "flex",
           flexWrap: "wrap",
+          justifyContent: "space-evenly",
         }}
       >
         {artists.map((artist) => {
-          if (!artist.images[0])
-            return (
-              <img
-                key={artist.id}
-                src="https://via.placeholder.com/150"
-                alt={artist.name}
-              />
-            );
-          return (
-            <img
-              style={{ width: "150px", height: "150px" }}
-              key={artist.id}
-              src={artist.images[0].url}
-              alt={artist.name}
-            />
-          );
+          return <ArtistShowcase key={artist.id} {...artist} />;
         })}
       </div>
     </>
