@@ -19,7 +19,15 @@ model Post {
     @@index([name])
 }
 
-model KeyValue {
+model SpookyImage {
+  id    Int     @id @default(autoincrement()) // Auto-incrementing ID
+  key   String  @unique                      // The key must be unique
+  value String                             // Value associated with the key
+  createdAt DateTime @default(now())        // Timestamp for when the entry was created
+  updatedAt DateTime @updatedAt             // Auto-updating timestamp for when the entry was last updated
+}
+
+model GeneratedImage {
   id    Int     @id @default(autoincrement()) // Auto-incrementing ID
   key   String  @unique                      // The key must be unique
   value String                             // Value associated with the key

@@ -1,5 +1,11 @@
 import { postRouter } from "@/server/api/routers/post";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
+import * as cloudinary from "cloudinary";
+import { entryRouter } from "./routers/entry";
+
+cloudinary.v2.config({
+  secure: true,
+});
 
 /**
  * This is the primary router for your server.
@@ -8,6 +14,7 @@ import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
  */
 export const appRouter = createTRPCRouter({
   post: postRouter,
+  entry: entryRouter,
 });
 
 // export type definition of API

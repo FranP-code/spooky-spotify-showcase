@@ -36,11 +36,6 @@ export default async function Home({
     }
   void api.post.getLatest.prefetch();
 
-  console.log({
-    access_token,
-    refresh_token,
-  });
-
   return (
     <HydrateClient>
       <main className="justify-centerbg-gradient-to-r flex min-h-screen flex-col items-center bg-gradient-to-r from-slate-900 to-slate-700 text-slate-200">
