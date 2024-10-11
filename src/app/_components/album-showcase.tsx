@@ -100,7 +100,7 @@ export default function AlbumShowcase({
               alt={album.name}
               onLoad={() => {
                 if (!spookyImageLoaded && generateSpookyImage.data) {
-                  // setSpookyImageLoaded(true);
+                  setSpookyImageLoaded(true);
                 }
               }}
             />
