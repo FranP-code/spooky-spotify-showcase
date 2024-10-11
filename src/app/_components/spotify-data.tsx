@@ -1,7 +1,5 @@
 import SpotifyWebApi from "spotify-web-api-node";
-import AlbumShowcase from "./album-showcase";
-import ArtistShowcase from "./artist-showcase";
-import { TRPCReactProvider } from "@/trpc/react";
+import Showcase from "./showcase";
 
 const TRACKS_LIMIT = 20;
 const ARTISTS_LIMIT = 21;
@@ -141,12 +139,12 @@ export default async function SpotifyData({
       </div> */}
 
       {/* TODO CHECK IF NEEDED */}
-      <TRPCReactProvider>
+      {/* <TRPCReactProvider>
         <h3>Tracks by album</h3>
         {Object.values(tracksByAlbum)
           .sort((a, b) => b.position - a.position)
           .map((album, index) => !index && <AlbumShowcase {...album} />)}
-      </TRPCReactProvider>
+      </TRPCReactProvider> */}
 
       {/* <h3>Albums images</h3>
       <div
@@ -175,7 +173,7 @@ export default async function SpotifyData({
         })}
       </div> */}
 
-      <h3>Artists images</h3>
+      {/* <h3>Artists images</h3>
       <div
         style={{
           display: "flex",
@@ -183,10 +181,12 @@ export default async function SpotifyData({
           justifyContent: "space-evenly",
         }}
       >
-        {artists.map((artist) => {
+        {[artists[0]].map((artist) => {
           return <ArtistShowcase key={artist.id} {...artist} />;
         })}
-      </div>
+      </div> */}
+
+      <Showcase tracksByAlbum={tracksByAlbum} artists={artists} />
     </>
   );
 }

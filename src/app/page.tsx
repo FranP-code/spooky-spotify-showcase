@@ -39,7 +39,7 @@ export default async function Home({
   return (
     <HydrateClient>
       <main className="justify-centerbg-gradient-to-r flex min-h-screen flex-col items-center bg-gradient-to-r from-slate-900 to-slate-700 text-slate-200">
-        <div className="container flex flex-col items-center justify-center gap-8 px-4 py-16">
+        <div className="container flex flex-col items-center justify-center gap-8 px-4 pb-16 pt-8">
           {userIsLogged ? (
             <SpotifyData
               accessToken={access_token as string}

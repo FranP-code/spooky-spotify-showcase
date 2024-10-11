@@ -10,16 +10,22 @@ ring2.register();
 quantum.register();
 
 export default function ArtistShowcase({
+  spookify,
   images,
   name,
   id,
 }: {
+  spookify: boolean;
   images: { url: string }[];
   name: string;
   id: string;
 }) {
-  const [showSpookyImage, setShowSpookyImage] = useState(false);
+  const [showSpookyImage, setShowSpookyImage] = useState(spookify);
   const [spookyImageLoaded, setSpookyImageLoaded] = useState(false);
+
+  useEffect(() => {
+    setShowSpookyImage(spookify);
+  }, [spookify]);
 
   const imageSource = images[0]
     ? images[0].url

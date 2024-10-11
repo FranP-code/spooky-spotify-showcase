@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Tilt from "react-parallax-tilt";
 import { TrackByAlbum } from "./spotify-data";
 import { api } from "@/trpc/react";
@@ -11,16 +11,21 @@ ring2.register();
 quantum.register();
 
 export default function AlbumShowcase({
+  spookify,
   album,
   position,
   tracks,
-}: TrackByAlbum) {
+}: TrackByAlbum & { spookify: boolean }) {
   const imageSource = album.images[0]
     ? album.images[0].url
     : "https://via.placeholder.com/150";
 
-  const [showSpookyImage, setShowSpookyImage] = useState(false);
+  const [showSpookyImage, setShowSpookyImage] = useState(spookify);
   const [spookyImageLoaded, setSpookyImageLoaded] = useState(false);
+
+  useEffect(() => {
+    setShowSpookyImage(spookify);
+  }, [spookify]);
 
   const entry = api.entry.get.useQuery({
     type: "album",
@@ -72,14 +77,17 @@ export default function AlbumShowcase({
   )?.match(/https:\/\/res.cloudinary.com\/[^"]+/);
 
   const spookyImageSource = spookyImageMatch ? spookyImageMatch[0] : null;
+  console.log(spookyImageSource);
 
   return (
     <div
-      onClick={() => setShowSpookyImage(!showSpookyImage)}
       key={album.id}
       className="flex w-full flex-wrap gap-3 rounded-xl bg-white bg-opacity-10 p-5 backdrop-blur-lg backdrop-filter"
     >
-      <div className="cursor-pointer">
+      <div
+        onClick={() => setShowSpookyImage(!showSpookyImage)}
+        className="cursor-pointer"
+      >
         <Tilt tiltMaxAngleX={10} tiltMaxAngleY={10} transitionSpeed={200}>
           <img
             className="h-36 w-36 cursor-pointer rounded"
@@ -99,7 +107,7 @@ export default function AlbumShowcase({
               src={spookyImageSource}
               alt={album.name}
               onLoad={() => {
-                if (!spookyImageLoaded && generateSpookyImage.data) {
+                if (!spookyImageLoaded) {
                   setSpookyImageLoaded(true);
                 }
               }}
@@ -120,7 +128,7 @@ export default function AlbumShowcase({
                 ) : (
                   <>
                     <l-ring-2 size="100" speed="1.75" color="white"></l-ring-2>
-                    <p className="text-center">Generating...</p>
+                    <p className="text-center">Getting image...</p>
                   </>
                 )}
               </div>
