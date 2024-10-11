@@ -1,6 +1,20 @@
 import SpotifyWebApi from "spotify-web-api-node";
+import AlbumShowcase from "./album-showcase";
 
 const TRACKS_LIMIT = 20;
+
+export type TrackByAlbum = {
+  album: {
+    id: string;
+    name: string;
+    images: { url: string }[];
+  };
+  position: number;
+  tracks: {
+    id: string;
+    name: string;
+  }[];
+};
 
 export default async function SpotifyData({
   accessToken,
@@ -33,25 +47,66 @@ export default async function SpotifyData({
     ...track,
     position: i + 1,
   }));
-  const tracksByAlbum = tracksData.body.items.reduce((acc, track) => {
-    if (!acc[track.album.id]) {
-      const tracksWithAlbum = tracks.filter(
-        (t) => t.album.id === track.album.id,
-      );
-      acc[track.album.id] = {
-        album: track.album,
-        position:
-          tracksWithAlbum.reduce(
-            (acc, _track) => TRACKS_LIMIT / _track.position + acc,
-            0,
-          ) / tracksWithAlbum.length,
-        tracks: [],
-      };
-    }
-    acc[track.album.id].tracks.push(track);
-    return acc;
-  }, {});
 
+  const tracksByAlbum = tracksData.body.items.reduce(
+    (acc: Record<string, TrackByAlbum>, track) => {
+      if (!acc[track.album.id]) {
+        const tracksWithAlbum = tracks.filter(
+          (t) => t.album.id === track.album.id,
+        );
+        acc[track.album.id] = {
+          album: track.album,
+          position:
+            tracksWithAlbum.reduce(
+              (acc, _track) => TRACKS_LIMIT / _track.position + acc,
+              0,
+            ) / tracksWithAlbum.length,
+          tracks: [],
+        };
+      }
+      (acc[track.album.id] || ({ tracks: [] } as any)).tracks.push(track);
+      return acc;
+    },
+    {},
+  );
+  // type Track = {
+  //   id: string;
+  //   name: string;
+  //   album: {
+  //     id: string;
+  //     name: string;
+  //     images: { url: string }[];
+  //   };
+  //   position: number;
+  // };
+
+  // type Album = {
+  //   album: {
+  //     id: string;
+  //     name: string;
+  //     images: { url: string }[];
+  //   };
+  //   position: number;
+  //   tracks: Track[];
+  // };
+
+  // // type Artist = {
+  // //   id: string;
+  // //   name: string;
+  // //   images: { url: string }[];
+  // // };
+
+  // // type SpotifyDataProps = {
+  // //   accessToken: string;
+  // //   refreshToken: string;
+  // // };
+
+  // // type SpotifyDataResponse = {
+  // //   albums: Album[];
+  // //   artists: Artist[];
+  // //   tracks: Track[];
+  // //   tracksByAlbum: { [key: string]: Album };
+  // // };
   console.log("Albums:", albums);
   console.log("Artists:", artists);
   console.log("Tracks:", tracks);
@@ -90,29 +145,10 @@ export default async function SpotifyData({
       {Object.values(tracksByAlbum)
         .sort((a, b) => b.position - a.position)
         .map((album) => (
-          <div key={album.album.id}>
-            <h4>{album.album.name}</h4>
-            <div
-              style={{
-                display: "flex",
-                flexWrap: "wrap",
-              }}
-            >
-              <img
-                style={{ width: "150px", height: "150px" }}
-                src={album.album.images[0].url}
-                alt={album.album.name}
-              />
-              <ul>
-                {album.tracks.map((track) => (
-                  <li key={track.id}>{track.name}</li>
-                ))}
-              </ul>
-            </div>
-          </div>
+          <AlbumShowcase {...album} />
         ))}
 
-      <h3>Albums images</h3>
+      {/* <h3>Albums images</h3>
       <div
         style={{
           display: "flex",
@@ -137,7 +173,7 @@ export default async function SpotifyData({
             />
           );
         })}
-      </div>
+      </div> */}
 
       <h3>Artists images</h3>
       <div
