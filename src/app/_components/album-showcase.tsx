@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Tilt from "react-parallax-tilt";
 import { TrackByAlbum } from "./spotify-data";
 import { api } from "@/trpc/react";
 
@@ -13,6 +14,7 @@ export default function AlbumShowcase({
     ? album.images[0].url
     : "https://via.placeholder.com/150";
 
+  const [showSpookyImage, setShowSpookyImage] = useState(false);
   const [spookyImageLoaded, setSpookyImageLoaded] = useState(false);
 
   const entry = api.entry.get.useQuery({
@@ -72,19 +74,33 @@ export default function AlbumShowcase({
       className="flex w-full flex-wrap gap-3 rounded-xl bg-white bg-opacity-10 p-5 backdrop-blur-lg backdrop-filter"
     >
       <div>
-        <img className="h-36 w-36 rounded" src={imageSource} alt={album.name} />
-        {!!spookyImageSource && (
+        <Tilt tiltMaxAngleX={10} tiltMaxAngleY={10} transitionSpeed={200}>
           <img
-            className="h-36 w-36 rounded"
-            src={spookyImageSource}
-            alt={album.name}
-            onLoad={() => {
-              if (!spookyImageLoaded && generateSpookyImage.data) {
-                setSpookyImageLoaded(true);
-              }
+            onClick={() => setShowSpookyImage(!showSpookyImage)}
+            className="h-36 w-36 cursor-pointer rounded"
+            style={{
+              display: showSpookyImage ? "none" : "block",
             }}
+            src={imageSource}
+            alt={album.name}
           />
-        )}
+          {!!spookyImageSource && (
+            <img
+              onClick={() => setShowSpookyImage(!showSpookyImage)}
+              className="h-36 w-36 cursor-pointer rounded"
+              style={{
+                display: showSpookyImage ? "block" : "none",
+              }}
+              src={spookyImageSource}
+              alt={album.name}
+              onLoad={() => {
+                if (!spookyImageLoaded && generateSpookyImage.data) {
+                  setSpookyImageLoaded(true);
+                }
+              }}
+            />
+          )}
+        </Tilt>
       </div>
       <section className="flex h-36 flex-grow flex-col">
         <h4 className="mb-2 text-lg font-semibold leading-none">

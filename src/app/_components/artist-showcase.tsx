@@ -1,3 +1,6 @@
+"use client";
+import Tilt from "react-parallax-tilt";
+
 export default function ArtistShowcase({
   images,
   name,
@@ -12,14 +15,16 @@ export default function ArtistShowcase({
     : "https://via.placeholder.com/150";
 
   return (
-    <div className="mb-2 w-56 overflow-hidden rounded-md border-2 border-slate-700">
-      <img className="h-56 w-56 object-fill" src={imageSource} alt={name} />
-      <p
-        className="w-full truncate break-all border-t-2 border-slate-300 bg-slate-200 p-2 text-center text-sm font-medium text-slate-700"
-        title={name}
-      >
-        {name}
-      </p>
-    </div>
+    <Tilt tiltMaxAngleX={10} tiltMaxAngleY={10} transitionSpeed={200}>
+      <div className="mb-2 w-56 cursor-pointer overflow-hidden rounded-md border-2 border-slate-700">
+        <img className="h-56 w-56 object-fill" src={imageSource} alt={name} />
+        <p
+          className="w-full truncate break-all border-t-2 border-slate-300 bg-slate-200 p-2 text-center text-sm font-medium text-slate-700"
+          title={name}
+        >
+          {name}
+        </p>
+      </div>
+    </Tilt>
   );
 }
