@@ -1,0 +1,170 @@
+import SpotifyWebApi from "spotify-web-api-node";
+
+const TRACKS_LIMIT = 20;
+
+export default async function SpotifyData({
+  accessToken,
+  refreshToken,
+}: {
+  accessToken: string;
+  refreshToken: string;
+}) {
+  const spotifyApi = new SpotifyWebApi({
+    clientId: process.env.SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+    redirectUri: process.env.SPOTIFY_REDIRECT_URI,
+  });
+  spotifyApi.setAccessToken(accessToken);
+
+  const albumsData = await spotifyApi.getMySavedAlbums({ limit: 20 });
+  const albums = albumsData.body.items;
+
+  const artistsData = await spotifyApi.getMyTopArtists({
+    limit: 20,
+    time_range: "short_term",
+  });
+  const artists = artistsData.body.items;
+
+  const tracksData = await spotifyApi.getMyTopTracks({
+    limit: TRACKS_LIMIT,
+    time_range: "short_term",
+  });
+  const tracks = tracksData.body.items.map((track, i) => ({
+    ...track,
+    position: i + 1,
+  }));
+  const tracksByAlbum = tracksData.body.items.reduce((acc, track) => {
+    if (!acc[track.album.id]) {
+      const tracksWithAlbum = tracks.filter(
+        (t) => t.album.id === track.album.id,
+      );
+      acc[track.album.id] = {
+        album: track.album,
+        position:
+          tracksWithAlbum.reduce(
+            (acc, _track) => TRACKS_LIMIT / _track.position + acc,
+            0,
+          ) / tracksWithAlbum.length,
+        tracks: [],
+      };
+    }
+    acc[track.album.id].tracks.push(track);
+    return acc;
+  }, {});
+
+  console.log("Albums:", albums);
+  console.log("Artists:", artists);
+  console.log("Tracks:", tracks);
+  console.log("Tracks by album:", tracksByAlbum);
+
+  return (
+    <>
+      {/* <h3>Tracks images</h3>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+        }}
+      >
+        {tracks.map((track) => {
+          if (!track.album.images[0])
+            return (
+              <img
+                key={track.id}
+                src="https://via.placeholder.com/150"
+                alt={track.name}
+              />
+            );
+          return (
+            <img
+              style={{ width: "150px", height: "150px" }}
+              key={track.id}
+              src={track.album.images[0].url}
+              alt={track.name}
+            />
+          );
+        })}
+      </div> */}
+
+      <h3>Tracks by album</h3>
+      {Object.values(tracksByAlbum)
+        .sort((a, b) => b.position - a.position)
+        .map((album) => (
+          <div key={album.album.id}>
+            <h4>{album.album.name}</h4>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+              }}
+            >
+              <img
+                style={{ width: "150px", height: "150px" }}
+                src={album.album.images[0].url}
+                alt={album.album.name}
+              />
+              <ul>
+                {album.tracks.map((track) => (
+                  <li key={track.id}>{track.name}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        ))}
+
+      <h3>Albums images</h3>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+        }}
+      >
+        {albums.map((album) => {
+          if (!album.album.images[0])
+            return (
+              <img
+                key={album.album.id}
+                src="https://via.placeholder.com/150"
+                alt={album.album.name}
+              />
+            );
+          return (
+            <img
+              style={{ width: "150px", height: "150px" }}
+              key={album.album.id}
+              src={album.album.images[0].url}
+              alt={album.album.name}
+            />
+          );
+        })}
+      </div>
+
+      <h3>Artists images</h3>
+      <div
+        style={{
+          display: "flex",
+          flexWrap: "wrap",
+        }}
+      >
+        {artists.map((artist) => {
+          if (!artist.images[0])
+            return (
+              <img
+                key={artist.id}
+                src="https://via.placeholder.com/150"
+                alt={artist.name}
+              />
+            );
+          return (
+            <img
+              style={{ width: "150px", height: "150px" }}
+              key={artist.id}
+              src={artist.images[0].url}
+              alt={artist.name}
+            />
+          );
+        })}
+      </div>
+    </>
+  );
+}

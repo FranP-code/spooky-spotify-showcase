@@ -3,8 +3,8 @@ import Link from "next/link";
 import { LatestPost } from "@/app/_components/post";
 import { api, HydrateClient } from "@/trpc/server";
 import SpotifyLogin from "./_components/spotify-login";
-import { NextApiRequest } from "next";
-import { NextResponse } from "next/server";
+import SpotifyData from "./_components/spotify-data";
+import SpotifyWebApi from "spotify-web-api-node";
 
 export default async function Home({
   searchParams,
@@ -15,9 +15,33 @@ export default async function Home({
 
   const access_token = searchParams?.access_token;
   const refresh_token = searchParams?.refresh_token;
-  const userLogged = access_token && refresh_token;
+  let userIsLogged = !!(
+    access_token &&
+    refresh_token &&
+    typeof access_token === "string" &&
+    typeof refresh_token === "string"
+  );
 
+  const spotifyApi = new SpotifyWebApi({
+    clientId: process.env.SPOTIFY_CLIENT_ID,
+    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+    redirectUri: process.env.SPOTIFY_REDIRECT_URI,
+  });
+
+  if (userIsLogged)
+    try {
+      spotifyApi.setAccessToken(access_token as string);
+      await spotifyApi.getMe();
+    } catch (error) {
+      console.error(error);
+      userIsLogged = false;
+    }
   void api.post.getLatest.prefetch();
+
+  console.log({
+    access_token,
+    refresh_token,
+  });
 
   return (
     <HydrateClient>
@@ -55,7 +79,14 @@ export default async function Home({
               {hello ? hello.greeting : "Loading tRPC query..."}
             </p>
           </div>
-          <SpotifyLogin />
+          {userIsLogged ? (
+            <SpotifyData
+              accessToken={access_token as string}
+              refreshToken={refresh_token as string}
+            />
+          ) : (
+            <SpotifyLogin />
+          )}
           <LatestPost />
         </div>
       </main>
