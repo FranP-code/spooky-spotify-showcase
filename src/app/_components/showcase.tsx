@@ -12,7 +12,10 @@ export function Showcase({
   tracksByAlbum: Record<string, any>;
   artists: any[];
 }) {
-  const [spookify, setSpookify] = useState(false);
+  const [spookify, setSpookify] = useState(true);
+  const [lastSpookyImageLoaded, setLastSpookyImageLoaded] = useState(0);
+
+  const albumsQuantity = Object.values(tracksByAlbum).length;
   return (
     <>
       <div className="flex gap-2 self-start">
@@ -24,10 +27,16 @@ export function Showcase({
       <h3>Tracks by album</h3>
       {Object.values(tracksByAlbum)
         .sort((a, b) => b.position - a.position)
-        .map(
-          (album, index) =>
-            !index && <AlbumShowcase spookify={spookify} {...album} />,
-        )}
+        .map((album, index) => (
+          <AlbumShowcase
+            key={album.id}
+            place={index}
+            lastSpookyImageLoaded={lastSpookyImageLoaded}
+            setLastSpookyImageLoaded={setLastSpookyImageLoaded}
+            spookify={spookify}
+            {...album}
+          />
+        ))}
       <h3>Artists images</h3>
       <div
         style={{
@@ -36,9 +45,16 @@ export function Showcase({
           justifyContent: "space-evenly",
         }}
       >
-        {[artists[0]].map((artist) => {
+        {artists.map((artist, index) => {
           return (
-            <ArtistShowcase spookify={spookify} key={artist.id} {...artist} />
+            <ArtistShowcase
+              place={index + albumsQuantity}
+              lastSpookyImageLoaded={lastSpookyImageLoaded}
+              setLastSpookyImageLoaded={setLastSpookyImageLoaded}
+              spookify={spookify}
+              key={artist.id}
+              {...artist}
+            />
           );
         })}
       </div>

@@ -25,7 +25,10 @@ export const uploadImage = async (
 };
 
 export const makeImageSpooky = (publicId: string) => {
-  const options = { effect: "gen_background_replace" };
+  const options = {
+    effect:
+      "gen_background_replace:prompt_a bizarre and super creepy background acording with main object theme-max creativity",
+  };
 
   try {
     const result = cloudinary.v2.image(publicId, { ...options });

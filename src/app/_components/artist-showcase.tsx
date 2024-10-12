@@ -14,11 +14,17 @@ export default function ArtistShowcase({
   images,
   name,
   id,
+  place,
+  lastSpookyImageLoaded,
+  setLastSpookyImageLoaded,
 }: {
   spookify: boolean;
   images: { url: string }[];
   name: string;
   id: string;
+  place: number;
+  lastSpookyImageLoaded: number;
+  setLastSpookyImageLoaded: any;
 }) {
   const [showSpookyImage, setShowSpookyImage] = useState(spookify);
   const [spookyImageLoaded, setSpookyImageLoaded] = useState(false);
@@ -79,6 +85,15 @@ export default function ArtistShowcase({
   )?.match(/https:\/\/res.cloudinary.com\/[^"]+/);
   const spookyImageSource = spookyImageMatch ? spookyImageMatch[0] : null;
 
+  const onImageLoad = () => {
+    if (!spookyImageLoaded) {
+      setSpookyImageLoaded(true);
+      setLastSpookyImageLoaded((state: number) =>
+        state > place ? state : place,
+      );
+    }
+  };
+
   return (
     <Tilt tiltMaxAngleX={10} tiltMaxAngleY={10} transitionSpeed={200}>
       <div
@@ -93,25 +108,29 @@ export default function ArtistShowcase({
           src={imageSource}
           alt={name}
         />
-        {!!spookyImageSource && (
-          <img
-            style={{
-              display: showSpookyImage && spookyImageLoaded ? "block" : "none",
-            }}
-            className="h-56 w-56 object-fill"
-            onLoad={() => {
-              if (!spookyImageLoaded) {
-                setSpookyImageLoaded(true);
-              }
-            }}
-            src={spookyImageSource}
-            alt={name}
-          />
-        )}
+        {spookyImageSource &&
+          (generateSpookyImage.data
+            ? lastSpookyImageLoaded >= place ||
+              lastSpookyImageLoaded + 1 === place
+            : true) && (
+            <img
+              style={{
+                display:
+                  showSpookyImage && spookyImageLoaded ? "block" : "none",
+              }}
+              className="h-56 w-56 object-fill"
+              onLoad={onImageLoad}
+              onError={() => {
+                onImageLoad();
+              }}
+              src={spookyImageSource}
+              alt={name}
+            />
+          )}
         {showSpookyImage && !spookyImageLoaded && (
           <div className="flex h-56 w-56 items-center justify-center">
             <div>
-              {generateSpookyImage.data ? (
+              {/* {generateSpookyImage.data ? (
                 <>
                   <l-quantum size="165" speed="1.75" color="white"></l-quantum>
                   <p className="text-center">Generating...</p>
@@ -128,7 +147,39 @@ export default function ArtistShowcase({
                   ></l-ring-2>
                   <p className="text-center">Getting image...</p>
                 </>
-              )}
+              )} */}
+              {(() => {
+                if (generateSpookyImage.data) {
+                  if (lastSpookyImageLoaded < place - 1) {
+                    return (
+                      <>
+                        <l-pulsar
+                          size="165"
+                          speed="1.75"
+                          color="white"
+                        ></l-pulsar>
+                        <p className="text-center">On queue...</p>
+                      </>
+                    );
+                  }
+                  return (
+                    <>
+                      <l-quantum
+                        size="165"
+                        speed="1.75"
+                        color="white"
+                      ></l-quantum>
+                      <p className="text-center">Generating...</p>
+                    </>
+                  );
+                }
+                return (
+                  <>
+                    <l-ring-2 size="165" speed="1.75" color="white"></l-ring-2>
+                    <p className="text-center">Getting image...</p>
+                  </>
+                );
+              })()}
             </div>
           </div>
         )}

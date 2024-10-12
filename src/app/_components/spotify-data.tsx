@@ -1,8 +1,6 @@
 import SpotifyWebApi from "spotify-web-api-node";
 import Showcase from "./showcase";
-
-const TRACKS_LIMIT = 20;
-const ARTISTS_LIMIT = 21;
+import { FETCH_ARTISTS_LIMIT, FETCH_TRACKS_LIMIT } from "../utils/contants";
 
 export type TrackByAlbum = {
   album: {
@@ -35,13 +33,13 @@ export default async function SpotifyData({
   const albums = albumsData.body.items;
 
   const artistsData = await spotifyApi.getMyTopArtists({
-    limit: ARTISTS_LIMIT,
+    limit: FETCH_ARTISTS_LIMIT,
     time_range: "short_term",
   });
   const artists = artistsData.body.items;
 
   const tracksData = await spotifyApi.getMyTopTracks({
-    limit: TRACKS_LIMIT,
+    limit: FETCH_TRACKS_LIMIT,
     time_range: "short_term",
   });
   const tracks = tracksData.body.items.map((track, i) => ({
@@ -59,7 +57,7 @@ export default async function SpotifyData({
           album: track.album,
           position:
             tracksWithAlbum.reduce(
-              (acc, _track) => TRACKS_LIMIT / _track.position + acc,
+              (acc, _track) => FETCH_TRACKS_LIMIT / _track.position + acc,
               0,
             ) / tracksWithAlbum.length,
           tracks: [],
