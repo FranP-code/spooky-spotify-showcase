@@ -2,14 +2,14 @@
 
 import { MdiSpotify } from "./spotify-icon";
 
-export default function SpotifyLogin() {
+export default function SpotifyLogin({ className }: { className?: string }) {
   const loginToSpotify = () => {
     window.location.href = "/api/spotify-login";
   };
 
   return (
     <button
-      className="flex items-center justify-center gap-1 rounded-full bg-green-500 py-2 pl-4 pr-5 font-bold text-white hover:bg-green-700"
+      className={`flex items-center justify-center gap-1 rounded-full bg-green-500 py-2 pl-4 pr-5 font-bold text-white hover:bg-green-700 ${className}`}
       onClick={loginToSpotify}
     >
       <MdiSpotify className="h-10 w-10" />
