@@ -3,6 +3,7 @@ import { api, HydrateClient } from "@/trpc/server";
 import SpotifyLogin from "./_components/spotify-login";
 import SpotifyData from "./_components/spotify-data";
 import SpotifyWebApi from "spotify-web-api-node";
+import LoginPage from "./_components/login-page";
 
 export default async function Home({
   searchParams,
@@ -46,7 +47,7 @@ export default async function Home({
               refreshToken={refresh_token as string}
             />
           ) : (
-            <SpotifyLogin />
+            <LoginPage />
           )}
         </div>
       </main>
