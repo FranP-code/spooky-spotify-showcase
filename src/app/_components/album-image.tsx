@@ -11,6 +11,8 @@ interface AlbumImageProps {
   place: number;
   spookyImageLoaded: boolean;
   onImageLoad: () => void;
+  loadGeneratedImage: boolean;
+  onQueue: boolean;
 }
 
 export function AlbumImage({
@@ -23,6 +25,8 @@ export function AlbumImage({
   place,
   spookyImageLoaded,
   onImageLoad,
+  loadGeneratedImage,
+  onQueue,
 }: AlbumImageProps) {
   return (
     <Tilt tiltMaxAngleX={10} tiltMaxAngleY={10} transitionSpeed={200}>
@@ -34,30 +38,26 @@ export function AlbumImage({
         src={imageSource}
         alt={album.name}
       />
-      {spookyImageSource &&
-        (generateSpookyImageData
-          ? lastSpookyImageLoaded >= place ||
-            lastSpookyImageLoaded + 1 === place
-          : true) && (
-          <img
-            className="h-36 w-36 cursor-pointer rounded"
-            style={{
-              display: showSpookyImage && spookyImageLoaded ? "block" : "none",
-            }}
-            src={spookyImageSource}
-            alt={album.name}
-            onLoad={onImageLoad}
-            onError={() => {
-              onImageLoad();
-            }}
-          />
-        )}
+      {loadGeneratedImage && spookyImageSource && (
+        <img
+          className="h-36 w-36 cursor-pointer rounded"
+          style={{
+            display: showSpookyImage && spookyImageLoaded ? "block" : "none",
+          }}
+          src={spookyImageSource}
+          alt={album.name}
+          onLoad={onImageLoad}
+          onError={() => {
+            onImageLoad();
+          }}
+        />
+      )}
       {showSpookyImage && !spookyImageLoaded && (
         <div className="flex h-36 w-36 items-center justify-center rounded bg-slate-300 bg-opacity-10">
           <div>
             {(() => {
               if (generateSpookyImageData) {
-                if (lastSpookyImageLoaded < place - 1) {
+                if (onQueue) {
                   return (
                     <>
                       <l-pulsar

@@ -2,7 +2,7 @@ import * as cloudinary from "cloudinary";
 import { Entry } from "../api/routers/entry";
 
 export const generateEntryUniqueKey = (entry: Entry): string => {
-  return `${entry.type}:${entry.name.trim().toLowerCase().replace(/\s/g, "-")}`;
+  return `${entry.type}:${entry.name.trim().toLowerCase().replace(/\s/g, "-")}:${entry.number || 1}`;
 };
 
 export const uploadImage = async (

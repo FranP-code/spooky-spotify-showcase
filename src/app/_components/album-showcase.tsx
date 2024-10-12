@@ -46,7 +46,28 @@ export default function AlbumShowcase({
   });
 
   const generateSpookyImage = api.entry.generate.useMutation();
+  const generateSecondSpookyImage = api.entry.generate.useMutation();
+
+  const spookyImageMatch = (
+    (entry.data?.value || generateSpookyImage.data) as null | string
+  )?.match(/https:\/\/res.cloudinary.com\/[^"]+/);
+
+  const spookyImageSource = spookyImageMatch ? spookyImageMatch[0] : "";
+
+  const secondEntry = api.entry.get.useQuery(
+    {
+      type: "album",
+      name: album.name,
+      image: spookyImageSource,
+      number: 2,
+    },
+    {
+      enabled: !!spookyImageSource,
+    },
+  );
+
   const saveImage = api.entry.save.useMutation();
+  const saveSecondImage = api.entry.save.useMutation();
 
   const handleGenerateSpookyImage = async () => {
     if (!entry.data && !entry.isLoading) {
@@ -55,6 +76,18 @@ export default function AlbumShowcase({
           type: "album",
           name: album.name,
           image: imageSource,
+        },
+      });
+    }
+  };
+
+  const handleSecondGenerateSpookyImage = async () => {
+    if (!secondEntry.data && !secondEntry.isLoading) {
+      generateSecondSpookyImage.mutate({
+        entry: {
+          type: "album",
+          name: album.name,
+          image: spookyImageSource as string,
         },
       });
     }
@@ -72,6 +105,18 @@ export default function AlbumShowcase({
     }
   };
 
+  const handleSecondSaveImage = async () => {
+    if (!secondEntry.data && !secondEntry.isLoading) {
+      saveSecondImage.mutate({
+        entry: {
+          type: "album",
+          image: spookyImageSource as string,
+          name: album.name,
+        },
+      });
+    }
+  };
+
   useEffect(() => {
     handleGenerateSpookyImage();
   }, [entry.data]);
@@ -83,12 +128,6 @@ export default function AlbumShowcase({
   }, [spookyImageLoaded]);
 
   //TODO ERROR HANDLING
-
-  const spookyImageMatch = (
-    (entry.data?.value || generateSpookyImage.data) as null | string
-  )?.match(/https:\/\/res.cloudinary.com\/[^"]+/);
-
-  const spookyImageSource = spookyImageMatch ? spookyImageMatch[0] : null;
 
   const onImageLoad = () => {
     if (!spookyImageLoaded) {
@@ -120,9 +159,19 @@ export default function AlbumShowcase({
               place={place}
               spookyImageLoaded={spookyImageLoaded}
               onImageLoad={onImageLoad}
+              loadGeneratedImage={
+                !!(
+                  spookyImageSource &&
+                  (generateSpookyImage.data
+                    ? lastSpookyImageLoaded >= place ||
+                      lastSpookyImageLoaded + 1 === place
+                    : true)
+                )
+              }
+              onQueue={lastSpookyImageLoaded < place - 1}
             />
           </SwiperSlide>
-          <SwiperSlide>
+          {/* <SwiperSlide>
             <AlbumImage
               showSpookyImage={showSpookyImage}
               imageSource={imageSource}
@@ -134,7 +183,7 @@ export default function AlbumShowcase({
               spookyImageLoaded={spookyImageLoaded}
               onImageLoad={onImageLoad}
             />
-          </SwiperSlide>
+          </SwiperSlide> */}
         </Swiper>
       </div>
       <section className="flex h-36 flex-grow flex-col">

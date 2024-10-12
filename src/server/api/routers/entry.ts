@@ -11,6 +11,7 @@ export type Entry = {
   type: "artist" | "album";
   name: string;
   image: string;
+  number?: number;
 };
 
 export const entryRouter = createTRPCRouter({
@@ -20,6 +21,7 @@ export const entryRouter = createTRPCRouter({
         type: z.enum(["artist", "album"]),
         name: z.string().min(1),
         image: z.string().min(1),
+        number: z.number().optional(),
       }),
     )
     .query(async ({ ctx, input }) => {
