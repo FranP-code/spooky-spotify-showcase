@@ -29,19 +29,19 @@ export default async function SpotifyData({
   });
   spotifyApi.setAccessToken(accessToken);
 
-  const albumsData = await spotifyApi.getMySavedAlbums({ limit: 20 });
-  const albums = albumsData.body.items;
+  const [artistsData, tracksData, userData] = await Promise.all([
+    spotifyApi.getMyTopArtists({
+      limit: FETCH_ARTISTS_LIMIT,
+      time_range: "short_term",
+    }),
+    spotifyApi.getMyTopTracks({
+      limit: FETCH_TRACKS_LIMIT,
+      time_range: "short_term",
+    }),
+    spotifyApi.getMe(),
+  ]);
 
-  const artistsData = await spotifyApi.getMyTopArtists({
-    limit: FETCH_ARTISTS_LIMIT,
-    time_range: "short_term",
-  });
   const artists = artistsData.body.items;
-
-  const tracksData = await spotifyApi.getMyTopTracks({
-    limit: FETCH_TRACKS_LIMIT,
-    time_range: "short_term",
-  });
   const tracks = tracksData.body.items.map((track, i) => ({
     ...track,
     position: i + 1,
@@ -184,7 +184,11 @@ export default async function SpotifyData({
         })}
       </div> */}
 
-      <Showcase tracksByAlbum={tracksByAlbum} artists={artists} />
+      <Showcase
+        userData={userData?.body}
+        tracksByAlbum={tracksByAlbum}
+        artists={artists}
+      />
     </>
   );
 }

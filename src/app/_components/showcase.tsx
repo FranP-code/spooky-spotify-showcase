@@ -4,11 +4,15 @@ import React, { useState } from "react";
 import Switch from "./switch";
 import AlbumShowcase from "./album-showcase";
 import ArtistShowcase from "./artist-showcase";
+import UserShowcase from "./user-showcase";
+import { TypographyH2 } from "./h2";
 
 export function Showcase({
+  userData,
   tracksByAlbum,
   artists,
 }: {
+  userData: Record<string, any>;
   tracksByAlbum: Record<string, any>;
   artists: any[];
 }) {
@@ -24,7 +28,8 @@ export function Showcase({
         </label>
         <Switch isChecked={spookify} setIsChecked={setSpookify} />
       </div>
-      <h3>Tracks by album</h3>
+      <UserShowcase spookify={spookify} {...userData} />
+      <TypographyH2 className="justify-start">Tracks by album</TypographyH2>
       {Object.values(tracksByAlbum)
         .sort((a, b) => b.position - a.position)
         .map((album, index) => {
