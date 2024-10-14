@@ -102,42 +102,32 @@ export function AlbumImage({
         />
       )}
       {showSpookyImage && !spookyImageLoaded && !error && (
-        <div className="flex h-36 w-36 items-center justify-center rounded bg-slate-300 bg-opacity-10">
-          <div>
-            {(() => {
-              if (generateSpookyImageData) {
-                if (onQueue) {
-                  return (
-                    <>
-                      <l-pulsar
-                        size="100"
-                        speed="1.75"
-                        color="white"
-                      ></l-pulsar>{" "}
-                      <p className="text-center">On queue...</p>
-                    </>
-                  );
-                }
+        <div className="flex h-36 w-36 flex-col items-center justify-center rounded bg-slate-900 text-base backdrop-blur-3xl">
+          {(() => {
+            if (generateSpookyImageData) {
+              if (onQueue) {
                 return (
                   <>
-                    <l-quantum
-                      size="100"
-                      speed="1.75"
-                      color="white"
-                    ></l-quantum>
-                    <p className="text-center">Generating...</p>
-                  </>
-                );
-              } else {
-                return (
-                  <>
-                    <l-ring-2 size="100" speed="1.75" color="white"></l-ring-2>
-                    <p className="text-center">Getting image...</p>
+                    <l-pulsar size="75" speed="1.75" color="white"></l-pulsar>{" "}
+                    <p className="text-center">On queue...</p>
                   </>
                 );
               }
-            })()}
-          </div>
+              return (
+                <>
+                  <l-quantum size="75" speed="1.75" color="white"></l-quantum>
+                  <p className="text-center">Generating...</p>
+                </>
+              );
+            } else {
+              return (
+                <>
+                  <l-ring-2 size="75" speed="1.75" color="white"></l-ring-2>
+                  <p className="text-center">Getting image...</p>
+                </>
+              );
+            }
+          })()}
         </div>
       )}
       {error && (

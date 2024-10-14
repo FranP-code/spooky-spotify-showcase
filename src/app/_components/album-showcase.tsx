@@ -135,10 +135,12 @@ export default function AlbumShowcase({
     >
       <div
         onClick={() => setShowSpookyImage(!showSpookyImage)}
-        className="cursor-pointer *:select-none"
+        className="*:drag-none cursor-pointer *:select-none"
       >
         <Swiper>
-          <SwiperSlide className="shadow-lg">
+          <SwiperSlide
+            className={`shadow-lg ${!showSpookyImage ? "swiper-no-swiping" : ""}`}
+          >
             <AlbumImage
               entry={entry}
               showSpookyImage={showSpookyImage}
@@ -163,7 +165,9 @@ export default function AlbumShowcase({
               error={firstImageError}
             />
           </SwiperSlide>
-          <SwiperSlide>
+          <SwiperSlide
+            className={`shadow-lg ${!showSpookyImage ? "swiper-no-swiping" : ""}`}
+          >
             <AlbumImage
               number={2}
               entry={secondEntry}
