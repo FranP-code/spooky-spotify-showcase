@@ -24,11 +24,16 @@ export const uploadImage = async (
   }
 };
 
-export const makeImageSpooky = (publicId: string) => {
-  const options = {
-    effect:
-      "gen_background_replace:prompt_a bizarre and super creepy background acording with main object theme-max creativity",
-  };
+export const makeImageSpooky = (publicId: string, number?: number) => {
+  const options: Record<string, string> = {};
+
+  if (number === 2) {
+    options.effect =
+      "gen_recolor:prompt_main_object_or_motive_on_image;to-color_green";
+  } else {
+    options.effect =
+      "gen_background_replace:prompt_a bizarre and super creepy background acording with main object theme-max creativity";
+  }
 
   try {
     const result = cloudinary.v2.image(publicId, { ...options });

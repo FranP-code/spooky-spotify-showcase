@@ -1,7 +1,11 @@
-import React from "react";
+import { api } from "@/trpc/react";
+import React, { useEffect, useState } from "react";
 import Tilt from "react-parallax-tilt";
+import SadFaceIcon from "./sad-face-icon";
 
 interface AlbumImageProps {
+  number?: number;
+  entry: { data: any; isLoading: boolean };
   showSpookyImage: boolean;
   imageSource: string;
   spookyImageSource: string | null;
@@ -9,13 +13,27 @@ interface AlbumImageProps {
   generateSpookyImageData: string | null;
   lastSpookyImageLoaded: number;
   place: number;
-  spookyImageLoaded: boolean;
-  onImageLoad: () => void;
   loadGeneratedImage: boolean;
   onQueue: boolean;
+  saveImage: {
+    mutate: (arg0: {
+      entry: {
+        type: "album" | "artist";
+        image: string;
+        name: string;
+        number?: number;
+      };
+    }) => void;
+  };
+  setLastSpookyImageLoaded: (
+    arg0: number | ((state: number) => number),
+  ) => void;
+  error: boolean;
 }
 
 export function AlbumImage({
+  number,
+  entry,
   showSpookyImage,
   imageSource,
   spookyImageSource,
@@ -23,11 +41,42 @@ export function AlbumImage({
   generateSpookyImageData,
   lastSpookyImageLoaded,
   place,
-  spookyImageLoaded,
-  onImageLoad,
   loadGeneratedImage,
   onQueue,
+  saveImage,
+  setLastSpookyImageLoaded,
+  error,
 }: AlbumImageProps) {
+  const [spookyImageLoaded, setSpookyImageLoaded] = useState(false);
+
+  const handleSaveImage = async () => {
+    if (!entry.data && !entry.isLoading) {
+      saveImage.mutate({
+        entry: {
+          type: "album",
+          image: imageSource,
+          name: album.name,
+          number,
+        },
+      });
+    }
+  };
+
+  useEffect(() => {
+    if (spookyImageLoaded) {
+      handleSaveImage();
+    }
+  }, [spookyImageLoaded]);
+
+  const onImageLoad = () => {
+    if (!spookyImageLoaded) {
+      setSpookyImageLoaded(true);
+      setLastSpookyImageLoaded((state: number) =>
+        state > place ? state : place,
+      );
+    }
+  };
+
   return (
     <Tilt tiltMaxAngleX={10} tiltMaxAngleY={10} transitionSpeed={200}>
       <img
@@ -38,7 +87,7 @@ export function AlbumImage({
         src={imageSource}
         alt={album.name}
       />
-      {loadGeneratedImage && spookyImageSource && (
+      {loadGeneratedImage && spookyImageSource && !error && (
         <img
           className="h-36 w-36 cursor-pointer rounded"
           style={{
@@ -52,7 +101,7 @@ export function AlbumImage({
           }}
         />
       )}
-      {showSpookyImage && !spookyImageLoaded && (
+      {showSpookyImage && !spookyImageLoaded && !error && (
         <div className="flex h-36 w-36 items-center justify-center rounded bg-slate-300 bg-opacity-10">
           <div>
             {(() => {
@@ -88,6 +137,14 @@ export function AlbumImage({
                 );
               }
             })()}
+          </div>
+        </div>
+      )}
+      {error && (
+        <div className="flex h-36 w-36 items-center justify-center rounded bg-slate-300 bg-opacity-10">
+          <div>
+            <SadFaceIcon className="h-16 w-16" color="white" />
+            <p className="text-center">Error</p>
           </div>
         </div>
       )}

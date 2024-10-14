@@ -41,6 +41,7 @@ export const entryRouter = createTRPCRouter({
           type: z.enum(["artist", "album"]),
           name: z.string().min(1),
           image: z.string().min(1),
+          number: z.number().optional(),
         }),
       }),
     )
@@ -51,7 +52,7 @@ export const entryRouter = createTRPCRouter({
         if (!uploadedImage || typeof uploadedImage !== "string") {
           throw new Error("Failed to upload image");
         }
-        const spookyImage = makeImageSpooky(uploadedImage);
+        const spookyImage = makeImageSpooky(uploadedImage, input.entry.number);
         if (!spookyImage || typeof spookyImage !== "string") {
           throw new Error("Failed to make image spooky");
         }
@@ -79,6 +80,7 @@ export const entryRouter = createTRPCRouter({
           type: z.enum(["artist", "album"]),
           name: z.string().min(1),
           image: z.string().min(1),
+          number: z.number().optional(),
         }),
       }),
     )

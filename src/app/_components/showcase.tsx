@@ -27,16 +27,18 @@ export function Showcase({
       <h3>Tracks by album</h3>
       {Object.values(tracksByAlbum)
         .sort((a, b) => b.position - a.position)
-        .map((album, index) => (
-          <AlbumShowcase
-            key={album.id}
-            place={index}
-            lastSpookyImageLoaded={lastSpookyImageLoaded}
-            setLastSpookyImageLoaded={setLastSpookyImageLoaded}
-            spookify={spookify}
-            {...album}
-          />
-        ))}
+        .map((album, index) => {
+          return (
+            <AlbumShowcase
+              key={album.id}
+              {...album}
+              places={[index, albumsQuantity + index]}
+              lastSpookyImageLoaded={lastSpookyImageLoaded}
+              setLastSpookyImageLoaded={setLastSpookyImageLoaded}
+              spookify={spookify}
+            />
+          );
+        })}
       <h3>Artists images</h3>
       <div
         style={{
