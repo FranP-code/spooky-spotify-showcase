@@ -6,6 +6,7 @@ import Tilt from "react-parallax-tilt";
 import { quantum } from "ldrs";
 import { ring2 } from "ldrs";
 import ErrorComponent from "./error";
+import ScrollFadeIn from "./scroll-fade-in";
 
 ring2.register();
 quantum.register();
@@ -99,7 +100,7 @@ export default function ArtistShowcase({
 
   return (
     <Tilt tiltMaxAngleX={10} tiltMaxAngleY={10} transitionSpeed={200}>
-      <div
+      <ScrollFadeIn
         className="mb-2 w-56 cursor-pointer overflow-hidden rounded-md border-2 border-slate-700 bg-slate-300 bg-opacity-10"
         onClick={() => setShowSpookyImage(!showSpookyImage)}
       >
@@ -180,7 +181,7 @@ export default function ArtistShowcase({
         >
           <span className="cursor-default">{name}</span>
         </p>
-      </div>
+      </ScrollFadeIn>
     </Tilt>
   );
 }

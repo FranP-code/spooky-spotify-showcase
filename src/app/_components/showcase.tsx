@@ -7,6 +7,7 @@ import ArtistShowcase from "./artist-showcase";
 import UserShowcase from "./user-showcase";
 import { TypographyH2 } from "./h2";
 import { TypographyH1 } from "./h1";
+import ScrollSlider from "./scroll-slider";
 
 export function Showcase({
   userData,
@@ -30,9 +31,11 @@ export function Showcase({
         <Switch isChecked={spookify} setIsChecked={setSpookify} />
       </div>
       <UserShowcase spookify={spookify} {...userData} />
-      <TypographyH1 className="mb-2 mt-8 self-baseline text-3xl lg:text-4xl">
-        Tracks by album
-      </TypographyH1>
+      <ScrollSlider>
+        <TypographyH1 className="mb-2 mt-8 self-baseline text-3xl lg:text-4xl">
+          Tracks by album
+        </TypographyH1>
+      </ScrollSlider>
       {Object.values(tracksByAlbum)
         .sort((a, b) => b.position - a.position)
         .map((album, index) => {
@@ -47,9 +50,12 @@ export function Showcase({
             />
           );
         })}
-      <TypographyH1 className="mb-2 mt-8 self-baseline text-3xl lg:text-4xl">
-        Artists
-      </TypographyH1>
+      <ScrollSlider>
+        <TypographyH1 className="mb-2 mt-8 self-baseline text-3xl lg:text-4xl">
+          Artists
+        </TypographyH1>
+      </ScrollSlider>
+
       <div
         style={{
           display: "flex",
