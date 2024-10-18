@@ -32,6 +32,9 @@ export const Charts = ({
   const topArtistsData = longTermArtistData.body.items.sort(
     (a, b) => b.popularity - a.popularity,
   );
+  const borderColor = 'rgb(163 230 53)';
+  const backgroundColor = 'rgb(101 163 13)';
+
   // debugger;
   const { ChartComponent } = useMemo(() => {
     if (selectedOption === options[0]) {
@@ -44,8 +47,8 @@ export const Charts = ({
           {
             label: "Top songs in this album",
             data: topAlbumsData.map((data) => data.position),
-            backgroundColor: "rgba(75, 192, 192, 0.6)",
-            borderColor: "rgba(75, 192, 192, 1)",
+            backgroundColor,
+            borderColor,
             borderWidth: 1,
             barThickness: 27,
             borderRadius: 2,
@@ -101,8 +104,8 @@ export const Charts = ({
           {
             label: "Top artists by popularity",
             data: topArtistsData.map((data) => data.popularity),
-            backgroundColor: "rgba(75, 192, 192, 0.6)",
-            borderColor: "rgba(75, 192, 192, 1)",
+            backgroundColor,
+            borderColor,
             borderWidth: 1,
             barThickness: 27,
             borderRadius: 2,
