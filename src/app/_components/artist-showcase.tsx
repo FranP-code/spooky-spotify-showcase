@@ -1,6 +1,6 @@
 "use client";
 import { api } from "@/trpc/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Tilt from "react-parallax-tilt";
 // import { AiLoader } from "./ai-loader";
 import { quantum } from "ldrs";
@@ -48,7 +48,7 @@ export default function ArtistShowcase({
   const generateSpookyImage = api.entry.generate.useMutation();
   const saveImage = api.entry.save.useMutation();
 
-  const error = useMemo(() => !!(entry.error || generateSpookyImage.error), [entry.error, generateSpookyImage.error]);
+  const error = !!(entry.error || generateSpookyImage.error);
 
   const handleGenerateSpookyImage = async () => {
     if (!entry.data && !entry.isLoading) {
@@ -86,7 +86,7 @@ export default function ArtistShowcase({
 
   const spookyImageSource = useMemo(() => {
     const spookyImageMatch = (
-      (entry.data?.value || generateSpookyImage.data) as null | string
+      (entry.data?.value ?? generateSpookyImage.data) as null | string
     )?.match(/https:\/\/res.cloudinary.com\/[^"]+/);
     return spookyImageMatch ? spookyImageMatch[0] : null;
   }, [entry.data?.value, generateSpookyImage.data]);
@@ -187,7 +187,3 @@ export default function ArtistShowcase({
     </Tilt>
   );
 }
-function useMemo(arg0: () => string | null, arg1: unknown[]) {
-  throw new Error("Function not implemented.");
-}
-

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { TrackByAlbum } from "./spotify-data";
+import { type TrackByAlbum } from "./spotify-data";
 import { api } from "@/trpc/react";
 import { quantum } from "ldrs";
 import { ring2 } from "ldrs";
@@ -29,9 +29,11 @@ export default function AlbumShowcase({
   lastSpookyImageLoaded: number;
   setLastSpookyImageLoaded: any;
 }) {
-  const imageSource = album.images[0]
-    ? album.images[0].url
-    : "https://via.placeholder.com/150";
+  const imageSource = album.images[1]
+    ? album.images[1].url
+    : (
+      album.images[0] ? album.images[0].url : "https://via.placeholder.com/150"
+    )
 
   const [showSpookyImage, setShowSpookyImage] = useState(spookify);
 
@@ -60,7 +62,7 @@ export default function AlbumShowcase({
       (entry.data?.value || generateSpookyImage.data) as null | string
     )?.match(/<img\s+src='([^']+)'[^>]*>/);
 
-    return spookyImageMatch && spookyImageMatch[1] ? spookyImageMatch[1] : "";
+    return spookyImageMatch?.[1] ? spookyImageMatch[1] : "";
   }, [entry.data, generateSpookyImage.data]);
 
   const secondEntry = api.entry.get.useQuery(
@@ -71,6 +73,7 @@ export default function AlbumShowcase({
       number: 2,
     },
     {
+      enabled: !!spookyImageSource,
       refetchInterval: false,
       refetchOnReconnect: false,
       refetchOnWindowFocus: false,
@@ -111,16 +114,14 @@ export default function AlbumShowcase({
 
   useEffect(() => {
     handleSecondGenerateSpookyImage();
-  }, [secondEntry.data, entry.data]);
+  }, [secondEntry.data, entry.data, spookyImageSource]);
 
   const secondSpookyImageSource = useMemo(() => {
-    const secondSpookyImageMatch = (
-      (secondEntry.data?.value ||
+    const secondSpookyImageMatch = /<img\s+src='([^']+)'[^>]*>/.exec(((secondEntry.data?.value ||
         generateSecondSpookyImage?.data ||
-        "") as string
-    )?.match(/<img\s+src='([^']+)'[^>]*>/);
+        "") as string));
 
-    return secondSpookyImageMatch && secondSpookyImageMatch[1]
+    return secondSpookyImageMatch?.[1]
       ? secondSpookyImageMatch[1]
       : "";
   }, [secondEntry.data, generateSecondSpookyImage.data]);
@@ -229,7 +230,9 @@ export default function AlbumShowcase({
           />
         )}
       </div>
-      <section className="flex h-36 flex-grow flex-col">
+      <section className="flex flex-grow flex-col" style={{
+        height: "146px"
+      }}>
         <h4 className="mb-2 text-lg font-semibold leading-none">
           {album.name}
         </h4>
