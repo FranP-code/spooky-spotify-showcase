@@ -67,7 +67,7 @@ export function Showcase({
         style={{
           display: "flex",
           flexWrap: "wrap",
-          justifyContent: "space-evenly",
+          columnGap: "8px"
         }}
       >
         {artists.map((artist, index) => {
