@@ -6,6 +6,7 @@ import AlbumShowcase from "./album-showcase";
 import ArtistShowcase from "./artist-showcase";
 import UserShowcase from "./user-showcase";
 import { TypographyH2 } from "./h2";
+import { TypographyH1 } from "./h1";
 
 export function Showcase({
   userData,
@@ -29,7 +30,9 @@ export function Showcase({
         <Switch isChecked={spookify} setIsChecked={setSpookify} />
       </div>
       <UserShowcase spookify={spookify} {...userData} />
-      <TypographyH2 className="justify-start">Tracks by album</TypographyH2>
+      <TypographyH1 className="mb-2 mt-8 self-baseline text-3xl lg:text-4xl">
+        Tracks by album
+      </TypographyH1>
       {Object.values(tracksByAlbum)
         .sort((a, b) => b.position - a.position)
         .map((album, index) => {
@@ -44,7 +47,9 @@ export function Showcase({
             />
           );
         })}
-      <h3>Artists images</h3>
+      <TypographyH1 className="mb-2 mt-8 self-baseline text-3xl lg:text-4xl">
+        Artists
+      </TypographyH1>
       <div
         style={{
           display: "flex",
