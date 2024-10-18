@@ -47,6 +47,9 @@ export default async function SpotifyData({
           },
           artists: userData?.artists,
           tracksByAlbum: userData?.tracksByAlbum,
+          longTermArtistData: false,
+          longTermTracksData: false,
+          longTermTracksByAlbum: false,
         }));
     } else {
       return getSpotifyData({
@@ -56,7 +59,14 @@ export default async function SpotifyData({
       });
     }
   };
-  const { artists, tracksByAlbum, userData } = await fetchData();
+  const {
+    artists,
+    tracksByAlbum,
+    userData,
+    longTermArtistData,
+    longTermTracksData,
+    longTermTracksByAlbum,
+  } = await fetchData();
 
   if (!artists || !tracksByAlbum || !userData?.body) {
     return <div>Error fetching data</div>;
@@ -198,6 +208,9 @@ export default async function SpotifyData({
         userData={userData?.body}
         tracksByAlbum={tracksByAlbum}
         artists={artists}
+        longTermArtistData={longTermArtistData}
+        longTermTracksData={longTermTracksData}
+        longTermTracksByAlbum={longTermTracksByAlbum}
       />
     </>
   );

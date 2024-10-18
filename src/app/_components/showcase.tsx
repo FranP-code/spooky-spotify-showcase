@@ -8,15 +8,22 @@ import UserShowcase from "./user-showcase";
 import { TypographyH2 } from "./h2";
 import { TypographyH1 } from "./h1";
 import ScrollSlider from "./scroll-slider";
+import Charts from "./charts";
 
 export function Showcase({
   userData,
   tracksByAlbum,
   artists,
+  longTermArtistData,
+  longTermTracksData,
+  longTermTracksByAlbum,
 }: {
   userData: Record<string, any>;
   tracksByAlbum: Record<string, any>;
   artists: any[];
+  // longTermArtistData
+  // longTermTracksData
+  // longTermTracksByAlbum
 }) {
   const [spookify, setSpookify] = useState(true);
   const [lastSpookyImageLoaded, setLastSpookyImageLoaded] = useState(0);
@@ -76,6 +83,23 @@ export function Showcase({
           );
         })}
       </div>
+      {longTermArtistData && longTermTracksData && longTermTracksByAlbum && (
+        <>
+          <ScrollSlider className="w-full">
+            <TypographyH1 className="mb-2 mt-8 self-center text-center text-3xl lg:text-4xl">
+              Charts
+            </TypographyH1>
+            <p className="text-center text-lg text-white text-opacity-40 backdrop-blur-lg backdrop-filter">
+              Let's see what's trending in your world.
+            </p>
+            <Charts
+              longTermArtistData={longTermArtistData}
+              longTermTracksData={longTermTracksData}
+              longTermTracksByAlbum={longTermTracksByAlbum}
+            />
+          </ScrollSlider>
+        </>
+      )}
     </>
   );
 }

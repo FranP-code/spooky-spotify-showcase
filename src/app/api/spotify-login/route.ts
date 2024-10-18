@@ -11,7 +11,12 @@ const spotifyApi = new SpotifyWebApi({
 const state = process.env.SPOTIFY_STATE as string;
 
 export async function GET(req: NextApiRequest, res: NextApiResponse) {
-  const scopes = ["user-library-read", "user-read-private", "user-top-read"];
+  const scopes = [
+    "user-library-read",
+    "user-read-private",
+    "user-top-read",
+    "user-read-recently-played",
+  ];
   const authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
 
   console.log(authorizeURL);
