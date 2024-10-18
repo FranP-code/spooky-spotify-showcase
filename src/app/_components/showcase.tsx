@@ -32,7 +32,7 @@ export function Showcase({
   return (
     <>
       <div className="flex gap-2 self-start">
-        <label className="flex items-center gap-2 text-lg font-semibold leading-6 text-white">
+        <label className="flex items-center gap-2 text-lg font-bold leading-6 text-white">
           Spookify
         </label>
         <Switch isChecked={spookify} setIsChecked={setSpookify} />
