@@ -80,7 +80,7 @@ export function AlbumImage({
   return (
     <Tilt tiltMaxAngleX={10} tiltMaxAngleY={10} transitionSpeed={200}>
       <img
-        className="h-36 w-36 cursor-pointer rounded"
+        className="h-36 w-36 cursor-pointer rounded-xl"
         style={{
           display: showSpookyImage ? "none" : "block",
         }}

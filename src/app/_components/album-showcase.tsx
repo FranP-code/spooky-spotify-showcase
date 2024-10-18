@@ -135,65 +135,93 @@ export default function AlbumShowcase({
     >
       <div
         onClick={() => setShowSpookyImage(!showSpookyImage)}
-        className="*:drag-none cursor-pointer *:select-none"
+        className="cursor-pointer *:select-none *:drag-none"
       >
-        <Swiper>
-          <SwiperSlide
-            className={`shadow-lg ${!showSpookyImage ? "swiper-no-swiping" : ""}`}
-          >
-            <AlbumImage
-              entry={entry}
-              showSpookyImage={showSpookyImage}
-              imageSource={imageSource}
-              spookyImageSource={spookyImageSource}
-              album={album}
-              generateSpookyImageData={generateSpookyImage.data as string}
-              lastSpookyImageLoaded={lastSpookyImageLoaded}
-              place={firstPlace}
-              loadGeneratedImage={
-                !!(
-                  spookyImageSource &&
-                  (generateSpookyImage.data
-                    ? lastSpookyImageLoaded >= firstPlace ||
-                      lastSpookyImageLoaded + 1 === firstPlace
-                    : true)
-                )
-              }
-              onQueue={lastSpookyImageLoaded < firstPlace - 1}
-              saveImage={saveImage}
-              setLastSpookyImageLoaded={setLastSpookyImageLoaded}
-              error={firstImageError}
-            />
-          </SwiperSlide>
-          <SwiperSlide
-            className={`shadow-lg ${!showSpookyImage ? "swiper-no-swiping" : ""}`}
-          >
-            <AlbumImage
-              number={2}
-              entry={secondEntry}
-              showSpookyImage={showSpookyImage}
-              imageSource={imageSource}
-              spookyImageSource={secondSpookyImageSource}
-              album={album}
-              generateSpookyImageData={generateSecondSpookyImage.data as string}
-              lastSpookyImageLoaded={lastSpookyImageLoaded}
-              place={secondPlace}
-              loadGeneratedImage={
-                !!(
-                  secondSpookyImageSource &&
-                  (generateSecondSpookyImage.data
-                    ? lastSpookyImageLoaded >= secondPlace ||
-                      lastSpookyImageLoaded + 1 === secondPlace
-                    : true)
-                )
-              }
-              onQueue={lastSpookyImageLoaded < secondPlace - 1}
-              saveImage={saveSecondImage}
-              setLastSpookyImageLoaded={setLastSpookyImageLoaded}
-              error={secondImageError}
-            />
-          </SwiperSlide>
-        </Swiper>
+        {showSpookyImage ? (
+          <Swiper>
+            <SwiperSlide
+              className={`shadow-lg ${!showSpookyImage ? "swiper-no-swiping" : ""}`}
+            >
+              <AlbumImage
+                entry={entry}
+                showSpookyImage={showSpookyImage}
+                imageSource={imageSource}
+                spookyImageSource={spookyImageSource}
+                album={album}
+                generateSpookyImageData={generateSpookyImage.data as string}
+                lastSpookyImageLoaded={lastSpookyImageLoaded}
+                place={firstPlace}
+                loadGeneratedImage={
+                  !!(
+                    spookyImageSource &&
+                    (generateSpookyImage.data
+                      ? lastSpookyImageLoaded >= firstPlace ||
+                        lastSpookyImageLoaded + 1 === firstPlace
+                      : true)
+                  )
+                }
+                onQueue={lastSpookyImageLoaded < firstPlace - 1}
+                saveImage={saveImage}
+                setLastSpookyImageLoaded={setLastSpookyImageLoaded}
+                error={firstImageError}
+              />
+            </SwiperSlide>
+            <SwiperSlide
+              className={`shadow-lg ${!showSpookyImage ? "swiper-no-swiping" : ""}`}
+            >
+              <AlbumImage
+                number={2}
+                entry={secondEntry}
+                showSpookyImage={showSpookyImage}
+                imageSource={imageSource}
+                spookyImageSource={secondSpookyImageSource}
+                album={album}
+                generateSpookyImageData={
+                  generateSecondSpookyImage.data as string
+                }
+                lastSpookyImageLoaded={lastSpookyImageLoaded}
+                place={secondPlace}
+                loadGeneratedImage={
+                  !!(
+                    secondSpookyImageSource &&
+                    (generateSecondSpookyImage.data
+                      ? lastSpookyImageLoaded >= secondPlace ||
+                        lastSpookyImageLoaded + 1 === secondPlace
+                      : true)
+                  )
+                }
+                onQueue={lastSpookyImageLoaded < secondPlace - 1}
+                saveImage={saveSecondImage}
+                setLastSpookyImageLoaded={setLastSpookyImageLoaded}
+                error={secondImageError}
+              />
+            </SwiperSlide>
+          </Swiper>
+        ) : (
+          <AlbumImage
+            entry={entry}
+            showSpookyImage={showSpookyImage}
+            imageSource={imageSource}
+            spookyImageSource={spookyImageSource}
+            album={album}
+            generateSpookyImageData={generateSpookyImage.data as string}
+            lastSpookyImageLoaded={lastSpookyImageLoaded}
+            place={firstPlace}
+            loadGeneratedImage={
+              !!(
+                spookyImageSource &&
+                (generateSpookyImage.data
+                  ? lastSpookyImageLoaded >= firstPlace ||
+                    lastSpookyImageLoaded + 1 === firstPlace
+                  : true)
+              )
+            }
+            onQueue={lastSpookyImageLoaded < firstPlace - 1}
+            saveImage={saveImage}
+            setLastSpookyImageLoaded={setLastSpookyImageLoaded}
+            error={firstImageError}
+          />
+        )}
       </div>
       <section className="flex h-36 flex-grow flex-col">
         <h4 className="mb-2 text-lg font-semibold leading-none">
