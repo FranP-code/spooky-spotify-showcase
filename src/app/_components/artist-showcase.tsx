@@ -48,7 +48,7 @@ export default function ArtistShowcase({
   const generateSpookyImage = api.entry.generate.useMutation();
   const saveImage = api.entry.save.useMutation();
 
-  const error = !!(entry.error || generateSpookyImage.error);
+  const error = useMemo(() => !!(entry.error || generateSpookyImage.error), [entry.error, generateSpookyImage.error]);
 
   const handleGenerateSpookyImage = async () => {
     if (!entry.data && !entry.isLoading) {
@@ -84,10 +84,12 @@ export default function ArtistShowcase({
     }
   }, [spookyImageLoaded]);
 
-  const spookyImageMatch = (
-    (entry.data?.value || generateSpookyImage.data) as null | string
-  )?.match(/https:\/\/res.cloudinary.com\/[^"]+/);
-  const spookyImageSource = spookyImageMatch ? spookyImageMatch[0] : null;
+  const spookyImageSource = useMemo(() => {
+    const spookyImageMatch = (
+      (entry.data?.value || generateSpookyImage.data) as null | string
+    )?.match(/https:\/\/res.cloudinary.com\/[^"]+/);
+    return spookyImageMatch ? spookyImageMatch[0] : null;
+  }, [entry.data?.value, generateSpookyImage.data]);
 
   const onImageLoad = () => {
     if (!spookyImageLoaded) {
@@ -185,3 +187,7 @@ export default function ArtistShowcase({
     </Tilt>
   );
 }
+function useMemo(arg0: () => string | null, arg1: unknown[]) {
+  throw new Error("Function not implemented.");
+}
+
