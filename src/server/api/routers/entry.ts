@@ -6,6 +6,7 @@ import {
   makeImageSpooky,
   uploadImage,
 } from "@/server/utils";
+import { TRPCError } from "@trpc/server";
 
 export type Entry = {
   type: "artist" | "album";
@@ -50,11 +51,17 @@ export const entryRouter = createTRPCRouter({
       try {
         const uploadedImage = await uploadImage(input.entry.image);
         if (!uploadedImage || typeof uploadedImage !== "string") {
-          throw new Error("Failed to upload image");
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to upload image",
+          });
         }
         const spookyImage = makeImageSpooky(uploadedImage, input.entry.number);
         if (!spookyImage || typeof spookyImage !== "string") {
-          throw new Error("Failed to make image spooky");
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Failed to make image spooky",
+          });
         }
         await ctx.db.generatedImage.upsert({
           where: {
@@ -69,6 +76,9 @@ export const entryRouter = createTRPCRouter({
         return spookyImage;
       } catch (error) {
         console.error(error);
+        if (error instanceof TRPCError) {
+          throw error;
+        }
         return error;
       }
     }),
@@ -93,7 +103,10 @@ export const entryRouter = createTRPCRouter({
           },
         });
         if (!generatedImage) {
-          throw new Error("No generated image found");
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "No generated image found",
+          });
         }
         const entry = await ctx.db.spookyImage.create({
           data: {
@@ -104,6 +117,9 @@ export const entryRouter = createTRPCRouter({
         return entry;
       } catch (error) {
         console.error(error);
+        if (error instanceof TRPCError) {
+          throw error;
+        }
         return error;
       }
     }),

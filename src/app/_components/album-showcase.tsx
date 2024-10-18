@@ -9,6 +9,7 @@ import { pulsar } from "ldrs";
 import Swiper from "./swiper";
 import { SwiperSlide } from "swiper/react";
 import AlbumImage from "./album-image";
+import ScrollFadeIn from "./scroll-fade-in";
 
 pulsar.register();
 ring2.register();
@@ -112,13 +113,17 @@ export default function AlbumShowcase({
     handleSecondGenerateSpookyImage();
   }, [secondEntry.data, entry.data]);
 
-  const secondSpookyImageMatch = (
-    (secondEntry.data?.value || generateSecondSpookyImage?.data || "") as string
-  ).match(/<img\s+src='([^']+)'[^>]*>/);
-  const secondSpookyImageSource =
-    secondSpookyImageMatch && secondSpookyImageMatch[1]
+  const secondSpookyImageSource = useMemo(() => {
+    const secondSpookyImageMatch = (
+      (secondEntry.data?.value ||
+        generateSecondSpookyImage?.data ||
+        "") as string
+    )?.match(/<img\s+src='([^']+)'[^>]*>/);
+
+    return secondSpookyImageMatch && secondSpookyImageMatch[1]
       ? secondSpookyImageMatch[1]
       : "";
+  }, [secondEntry.data, generateSecondSpookyImage.data]);
 
   const firstPlace = places[0] || 0;
   const secondPlace = places[1] || 0;
@@ -129,10 +134,11 @@ export default function AlbumShowcase({
   );
 
   return (
-    <div
-      key={album.id}
-      className="flex w-full flex-wrap gap-3 rounded-xl bg-white bg-opacity-10 p-5 backdrop-blur-lg backdrop-filter"
-    >
+    <ScrollFadeIn className="flex w-full flex-wrap gap-3 rounded-xl bg-white bg-opacity-10 p-5 backdrop-blur-lg backdrop-filter">
+      {/* <div
+        key={album.id}
+        className="flex w-full flex-wrap gap-3 rounded-xl bg-white bg-opacity-10 p-5 backdrop-blur-lg backdrop-filter"
+      > */}
       <div
         onClick={() => setShowSpookyImage(!showSpookyImage)}
         className="mr-2 cursor-pointer *:select-none *:drag-none"
@@ -233,6 +239,7 @@ export default function AlbumShowcase({
           ))}
         </ul>
       </section>
-    </div>
+      {/* </div> */}
+    </ScrollFadeIn>
   );
 }

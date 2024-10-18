@@ -48,6 +48,9 @@ export function AlbumImage({
   error,
 }: AlbumImageProps) {
   const [spookyImageLoaded, setSpookyImageLoaded] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+
+  const errorValue = error || loadError;
 
   const handleSaveImage = async () => {
     if (!entry.data && !entry.isLoading) {
@@ -87,7 +90,7 @@ export function AlbumImage({
         src={imageSource}
         alt={album.name}
       />
-      {loadGeneratedImage && spookyImageSource && !error && (
+      {loadGeneratedImage && spookyImageSource && !errorValue && (
         <img
           className="h-36 w-36 cursor-pointer rounded"
           style={{
@@ -98,10 +101,11 @@ export function AlbumImage({
           onLoad={onImageLoad}
           onError={() => {
             onImageLoad();
+            setLoadError(true);
           }}
         />
       )}
-      {showSpookyImage && !spookyImageLoaded && !error && (
+      {showSpookyImage && !spookyImageLoaded && !errorValue && (
         <div className="flex h-36 w-36 flex-col items-center justify-center rounded bg-slate-900 text-base backdrop-blur-3xl">
           {(() => {
             if (generateSpookyImageData) {
@@ -130,7 +134,7 @@ export function AlbumImage({
           })()}
         </div>
       )}
-      {error && showSpookyImage && (
+      {errorValue && showSpookyImage && (
         <div className="flex h-36 w-36 items-center justify-center rounded-xl bg-slate-900">
           <ErrorComponent />
         </div>
