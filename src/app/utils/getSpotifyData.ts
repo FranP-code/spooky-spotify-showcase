@@ -4,8 +4,12 @@ import { TrackByAlbum } from "../_components/spotify-data";
 
 export const getSpotifyData = async ({
   accessToken,
+  tracksLimit,
+  artistsLimit,
 }: {
   accessToken: string;
+  tracksLimit?: number;
+  artistsLimit?: number;
 }) => {
   const spotifyApi = new SpotifyWebApi({
     clientId: process.env.SPOTIFY_CLIENT_ID,
@@ -16,11 +20,19 @@ export const getSpotifyData = async ({
 
   const [artistsData, tracksData, userData] = await Promise.all([
     spotifyApi.getMyTopArtists({
-      limit: FETCH_ARTISTS_LIMIT,
+      limit: Math.min(
+        ...[FETCH_ARTISTS_LIMIT, artistsLimit].filter(
+          (v) => typeof v === "number",
+        ),
+      ),
       time_range: "short_term",
     }),
     spotifyApi.getMyTopTracks({
-      limit: FETCH_TRACKS_LIMIT,
+      limit: Math.min(
+        ...[FETCH_TRACKS_LIMIT, tracksLimit].filter(
+          (v) => typeof v === "number",
+        ),
+      ),
       time_range: "short_term",
     }),
     spotifyApi.getMe(),

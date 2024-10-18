@@ -28,6 +28,16 @@ export default async function Home({
     redirectUri: process.env.SPOTIFY_REDIRECT_URI,
   });
 
+  const [tracksLimit, artistsLimit] = [
+    searchParams?.["tracks-limit"],
+    searchParams?.["artists-limit"],
+  ].map((value) => {
+    if (value && typeof value === "string") {
+      return parseInt(value, 10);
+    }
+    return undefined;
+  });
+
   if (userIsLogged)
     try {
       spotifyApi.setAccessToken(access_token as string);
@@ -47,6 +57,8 @@ export default async function Home({
               accessToken={access_token as string}
               refreshToken={refresh_token as string}
               placeholderData={placeholderDataSelected}
+              tracksLimit={tracksLimit}
+              artistsLimit={artistsLimit}
             />
           ) : (
             <LoginPage />

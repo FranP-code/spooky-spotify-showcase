@@ -1,6 +1,5 @@
 import SpotifyWebApi from "spotify-web-api-node";
 import Showcase from "./showcase";
-import { FETCH_ARTISTS_LIMIT, FETCH_TRACKS_LIMIT } from "../utils/contants";
 import { getSpotifyData } from "../utils/getSpotifyData";
 import { api } from "@/trpc/server";
 
@@ -21,10 +20,14 @@ export default async function SpotifyData({
   accessToken,
   refreshToken,
   placeholderData,
+  tracksLimit,
+  artistsLimit,
 }: {
   accessToken: string;
   refreshToken: string;
   placeholderData: boolean;
+  tracksLimit?: number;
+  artistsLimit?: number;
 }) {
   const fetchData = async () => {
     if (placeholderData) {
@@ -48,6 +51,8 @@ export default async function SpotifyData({
     } else {
       return getSpotifyData({
         accessToken,
+        tracksLimit,
+        artistsLimit,
       });
     }
   };
