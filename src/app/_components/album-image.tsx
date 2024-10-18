@@ -1,7 +1,7 @@
 import { api } from "@/trpc/react";
 import React, { useEffect, useState } from "react";
 import Tilt from "react-parallax-tilt";
-import SadFaceIcon from "./sad-face-icon";
+import ErrorComponent from "./error";
 
 interface AlbumImageProps {
   number?: number;
@@ -130,12 +130,9 @@ export function AlbumImage({
           })()}
         </div>
       )}
-      {error && (
-        <div className="flex h-36 w-36 items-center justify-center rounded bg-slate-300 bg-opacity-10">
-          <div>
-            <SadFaceIcon className="h-16 w-16" color="white" />
-            <p className="text-center">Error</p>
-          </div>
+      {error && showSpookyImage && (
+        <div className="flex h-36 w-36 items-center justify-center rounded-xl bg-slate-900">
+          <ErrorComponent />
         </div>
       )}
     </Tilt>

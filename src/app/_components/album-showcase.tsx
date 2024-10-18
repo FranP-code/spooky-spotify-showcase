@@ -135,7 +135,7 @@ export default function AlbumShowcase({
     >
       <div
         onClick={() => setShowSpookyImage(!showSpookyImage)}
-        className="cursor-pointer *:select-none *:drag-none"
+        className="mr-2 cursor-pointer *:select-none *:drag-none"
       >
         {showSpookyImage ? (
           <Swiper>

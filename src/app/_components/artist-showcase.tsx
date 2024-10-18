@@ -5,6 +5,7 @@ import Tilt from "react-parallax-tilt";
 // import { AiLoader } from "./ai-loader";
 import { quantum } from "ldrs";
 import { ring2 } from "ldrs";
+import ErrorComponent from "./error";
 
 ring2.register();
 quantum.register();
@@ -45,6 +46,8 @@ export default function ArtistShowcase({
 
   const generateSpookyImage = api.entry.generate.useMutation();
   const saveImage = api.entry.save.useMutation();
+
+  const error = !!(entry.error || generateSpookyImage.error);
 
   const handleGenerateSpookyImage = async () => {
     if (!entry.data && !entry.isLoading) {
@@ -112,7 +115,8 @@ export default function ArtistShowcase({
           (generateSpookyImage.data
             ? lastSpookyImageLoaded >= place ||
               lastSpookyImageLoaded + 1 === place
-            : true) && (
+            : true) &&
+          !error && (
             <img
               style={{
                 display:
@@ -127,27 +131,14 @@ export default function ArtistShowcase({
               alt={name}
             />
           )}
-        {showSpookyImage && !spookyImageLoaded && (
+        {showSpookyImage && error && (
+          <div className="flex h-56 w-56 items-center justify-center">
+            <ErrorComponent />
+          </div>
+        )}
+        {showSpookyImage && !spookyImageLoaded && !error && (
           <div className="flex h-56 w-56 items-center justify-center">
             <div>
-              {/* {generateSpookyImage.data ? (
-                <>
-                  <l-quantum size="165" speed="1.75" color="white"></l-quantum>
-                  <p className="text-center">Generating...</p>
-                </>
-              ) : (
-                <>
-                  <l-ring-2
-                    size="165"
-                    stroke="5"
-                    stroke-length="0.25"
-                    bg-opacity="0.1"
-                    speed="0.8"
-                    color="white"
-                  ></l-ring-2>
-                  <p className="text-center">Getting image...</p>
-                </>
-              )} */}
               {(() => {
                 if (generateSpookyImage.data) {
                   if (lastSpookyImageLoaded < place - 1) {
