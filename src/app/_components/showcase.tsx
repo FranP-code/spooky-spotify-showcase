@@ -25,7 +25,7 @@ export function Showcase({
   // longTermTracksData
   // longTermTracksByAlbum
 }) {
-  const [spookify, setSpookify] = useState(true);
+  const [spookify, setSpookify] = useState(false);
   const [lastSpookyImageLoaded, setLastSpookyImageLoaded] = useState(0);
 
   const albumsQuantity = Object.values(tracksByAlbum).length;
