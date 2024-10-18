@@ -2,6 +2,7 @@ import { postRouter } from "@/server/api/routers/post";
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 import * as cloudinary from "cloudinary";
 import { entryRouter } from "./routers/entry";
+import { userDataRouter } from "./routers/user-data";
 
 cloudinary.v2.config({
   secure: true,
@@ -15,6 +16,7 @@ cloudinary.v2.config({
 export const appRouter = createTRPCRouter({
   post: postRouter,
   entry: entryRouter,
+  userData: userDataRouter,
 });
 
 // export type definition of API

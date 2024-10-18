@@ -34,3 +34,77 @@ model GeneratedImage {
   createdAt DateTime @default(now())        // Timestamp for when the entry was created
   updatedAt DateTime @updatedAt             // Auto-updating timestamp for when the entry was last updated
 }
+
+model ArtistImage {
+  id        String   @id @default(uuid())
+  url       String
+  artistId  String
+  artist    Artist   @relation(fields: [artistId], references: [id])
+}
+
+model Artist {
+  id                String    @id @default(uuid())
+  name              String
+  images            ArtistImage[]
+
+  UserData UserData[]
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+}
+
+model Album {
+  id                String    @id @default(uuid())
+  name              String
+  images            AlbumImage[]
+  tracks            Track[]
+
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // UserData UserData[]
+}
+
+model AlbumImage {
+  id        String   @id @default(uuid())
+  url       String
+  albumId   String
+  album     Album    @relation(fields: [albumId], references: [id])
+}
+
+model SpotifyUserImage {
+  id        String   @id @default(uuid())
+  url       String
+  spotifyUserId   String
+  spotifyUser     SpotifyUser    @relation(fields: [spotifyUserId], references: [id])
+}
+
+model Track {
+  id        String   @id @default(uuid())
+  name      String
+  albumId   String
+  album     Album    @relation(fields: [albumId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model SpotifyUser {
+  id        String   @id @default(uuid())
+  spotifyUserId String @unique
+  displayName String?
+  images     SpotifyUserImage[]
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  UserData UserData[]
+}
+
+model UserData {
+  id    Int     @id @default(autoincrement()) // Auto-incrementing ID
+  artists Artist[] // Relation to the Artist model
+  // albums  Album[]  // Relation to the Album model
+  tracksByAlbum String
+  spotifyUserId String
+  spotifyUser SpotifyUser @relation(fields: [spotifyUserId], references: [id])
+}

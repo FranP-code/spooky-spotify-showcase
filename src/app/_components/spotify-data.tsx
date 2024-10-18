@@ -1,6 +1,8 @@
 import SpotifyWebApi from "spotify-web-api-node";
 import Showcase from "./showcase";
 import { FETCH_ARTISTS_LIMIT, FETCH_TRACKS_LIMIT } from "../utils/contants";
+import { getSpotifyData } from "../utils/getSpotifyData";
+import { api } from "@/trpc/server";
 
 export type TrackByAlbum = {
   album: {
@@ -18,56 +20,59 @@ export type TrackByAlbum = {
 export default async function SpotifyData({
   accessToken,
   refreshToken,
+  placeholderData,
 }: {
   accessToken: string;
   refreshToken: string;
+  placeholderData: boolean;
 }) {
-  const spotifyApi = new SpotifyWebApi({
-    clientId: process.env.SPOTIFY_CLIENT_ID,
-    clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
-    redirectUri: process.env.SPOTIFY_REDIRECT_URI,
-  });
-  spotifyApi.setAccessToken(accessToken);
+  const fetchData = async () => {
+    if (placeholderData) {
+      //I'm so sorry for what I did here
+      return api.userData
+        .get({
+          spotifyUserId: process.env.SPOTIFY_OWNER_USER_ID as string,
+        })
+        .then((userData) => ({
+          userData: {
+            body: userData?.spotifyUser
+              ? {
+                  ...userData.spotifyUser,
+                  display_name: userData.spotifyUser.displayName,
+                }
+              : null,
+          },
+          artists: userData?.artists,
+          tracksByAlbum: userData?.tracksByAlbum,
+        }));
+    } else {
+      return getSpotifyData({
+        accessToken,
+      });
+    }
+  };
+  const { artists, tracksByAlbum, userData } = await fetchData();
 
-  const [artistsData, tracksData, userData] = await Promise.all([
-    spotifyApi.getMyTopArtists({
-      limit: FETCH_ARTISTS_LIMIT,
-      time_range: "short_term",
-    }),
-    spotifyApi.getMyTopTracks({
-      limit: FETCH_TRACKS_LIMIT,
-      time_range: "short_term",
-    }),
-    spotifyApi.getMe(),
-  ]);
+  if (!artists || !tracksByAlbum || !userData?.body) {
+    return <div>Error fetching data</div>;
+  }
 
-  const artists = artistsData.body.items;
-  const tracks = tracksData.body.items.map((track, i) => ({
-    ...track,
-    position: i + 1,
-  }));
+  if (userData.body.id === process.env.SPOTIFY_OWNER_USER_ID) {
+    await api.userData.create({
+      spotifyUserId: userData.body.id,
+      artists: artists.map((artist) => ({
+        name: artist.name,
+        images: artist.images,
+      })),
+      tracksByAlbum: tracksByAlbum,
+      user: {
+        id: userData.body.id,
+        displayName: userData.body.display_name || "",
+        images: userData.body.images || [],
+      },
+    });
+  }
 
-  const tracksByAlbum = tracksData.body.items.reduce(
-    (acc: Record<string, TrackByAlbum>, track) => {
-      if (!acc[track.album.id]) {
-        const tracksWithAlbum = tracks.filter(
-          (t) => t.album.id === track.album.id,
-        );
-        acc[track.album.id] = {
-          album: track.album,
-          position:
-            tracksWithAlbum.reduce(
-              (acc, _track) => FETCH_TRACKS_LIMIT / _track.position + acc,
-              0,
-            ) / tracksWithAlbum.length,
-          tracks: [],
-        };
-      }
-      (acc[track.album.id] || ({ tracks: [] } as any)).tracks.push(track);
-      return acc;
-    },
-    {},
-  );
   // type Track = {
   //   id: string;
   //   name: string;
