@@ -1,4 +1,4 @@
-import { NextApiRequest, NextApiResponse } from "next";
+import { type NextApiRequest, type NextApiResponse } from "next";
 import SpotifyWebApi from "spotify-web-api-node";
 import { redirect } from "next/navigation";
 
@@ -8,7 +8,7 @@ const spotifyApi = new SpotifyWebApi({
   redirectUri: process.env.SPOTIFY_REDIRECT_URI,
 });
 
-const state = process.env.SPOTIFY_STATE as string;
+const state = process.env.SPOTIFY_STATE!;
 
 export async function GET(req: NextApiRequest, res: NextApiResponse) {
   const scopes = [
@@ -19,6 +19,5 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
   ];
   const authorizeURL = spotifyApi.createAuthorizeURL(scopes, state);
 
-  console.log(authorizeURL);
   redirect(authorizeURL);
 }

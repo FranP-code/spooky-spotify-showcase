@@ -13,12 +13,6 @@ export const Charts = ({
 }) => {
   const options = ["Top albums", "Artist popularity"];
   const [selectedOption, setSelectedOption] = useState(options[0]);
-  const a = "";
-  console.log({
-    longTermArtistData,
-    longTermTracksData,
-    longTermTracksByAlbum,
-  });
   const topAlbums = Object.values(longTermTracksByAlbum).sort(
     (a, b) => b.tracks.length - a.tracks.length,
   );
